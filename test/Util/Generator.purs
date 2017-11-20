@@ -3,7 +3,7 @@ module Util.Generator where
 import Prelude
 
 import Test.QuickCheck.Gen (Gen, elements, shuffle, vectorOf)
-import RPS (RPS(Rock, Paper, Scissor), Round(Round), whatCanBeat)
+import Data.RPS (RPS(Rock, Paper, Scissor), Round(Round), whatCanBeat)
 import Data.NonEmpty (NonEmpty(..))
 import Data.List (List, fromFoldable)
 

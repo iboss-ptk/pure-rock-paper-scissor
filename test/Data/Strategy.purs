@@ -1,12 +1,12 @@
-module Test.Strategy (strategy) where
+module Test.Data.Strategy (strategy) where
 
 import Prelude
 
 import Control.Monad.Eff.Random (RANDOM)
 import Control.Plus (empty)
 import Data.List (singleton)
-import RPS (RPS(..), Round(..), whatCanBeat)
-import Strategy (nextThrow)
+import Data.RPS (RPS(..), Round(..), whatCanBeat)
+import Data.Strategy (nextThrow)
 import Test.QuickCheck ((===))
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)

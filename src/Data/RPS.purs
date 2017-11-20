@@ -1,4 +1,4 @@
-module RPS where 
+module Data.RPS where 
 
 import Prelude
 

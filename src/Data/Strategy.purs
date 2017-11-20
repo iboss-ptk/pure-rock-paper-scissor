@@ -1,4 +1,4 @@
-module Strategy where
+module Data.Strategy where
 
 import Prelude
 
@@ -6,7 +6,7 @@ import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Random (RANDOM, randomInt)
 import Data.List (List, head)
 import Data.Maybe (Maybe(..))
-import RPS (RPS(..), Result(..), Round(..), against, whatCanBeat)
+import Data.RPS (RPS(..), Result(..), Round(..), against, whatCanBeat)
 
 nextThrow :: RPS -> List Round -> RPS
 nextThrow randomly rounds = case head rounds of

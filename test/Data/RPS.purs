@@ -1,9 +1,9 @@
-module Test.RPS (rps) where
+module Test.Data.RPS (rps) where
 
 import Prelude
 
 import Control.Monad.Eff.Random (RANDOM)
-import RPS (Result(Lose, Win, Tie), Score(Score), against, totalScore, whatCanBeat, whatLoseTo)
+import Data.RPS (Result(Lose, Win, Tie), Score(Score), against, totalScore, whatCanBeat, whatLoseTo)
 import Test.QuickCheck ((===))
 import Test.QuickCheck.Gen (chooseInt)
 import Test.Spec (Spec, describe, it)

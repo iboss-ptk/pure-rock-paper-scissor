@@ -3,22 +3,30 @@ module Test.RPS (rps) where
 import Prelude
 
 import Control.Monad.Eff.Random (RANDOM)
-import Data.List (List, fromFoldable)
-import Data.NonEmpty (NonEmpty(..))
-import RPS (RPS(..), Result(..), Round(..), Score(..), against, dominantOf, totalScore)
+import RPS (Result(Lose, Win, Tie), Score(Score), against, totalScore, whatCanBeat, whatLoseTo)
 import Test.QuickCheck ((===))
-import Test.QuickCheck.Gen (Gen, chooseInt, elements, shuffle, vectorOf)
+import Test.QuickCheck.Gen (chooseInt)
 import Test.Spec (Spec, describe, it)
 import Test.Spec.QuickCheck (quickCheck)
+import Util.Generator (genRPS, genRounds)
 
 rps :: ∀ e. Spec ( random ∷ RANDOM | e ) Unit
 rps =
   describe "RPS" do
-    describe "dominantOf" do
+    describe "whatCanBeat" do
        it "returns initial argument when applied three times" do
         quickCheck $ do
           x <- genRPS
-          pure $ dominantOf (dominantOf (dominantOf x)) === x
+          pure $ whatCanBeat (whatCanBeat (whatCanBeat x)) === x
+
+    describe "whatLoseTo" do
+       it "is an inverse of whatCanBeat" do
+        quickCheck $ do
+          x <- genRPS
+          pure $ whatCanBeat (whatLoseTo x) === x
+        quickCheck $ do
+          x <- genRPS
+          pure $ whatLoseTo (whatCanBeat x) === x
 
     describe "against" do
        it "tie when both side are the same" do
@@ -26,15 +34,15 @@ rps =
            x <- genRPS
            pure $ x `against` x === Tie
 
-       it "win when first rps is a dominant of the second" do
+       it "win when first rps can beat the second" do
         quickCheck $ do
            x <- genRPS
-           pure $ dominantOf x `against` x === Win
+           pure $ whatCanBeat x `against` x === Win
 
-       it "lose when second rps is a dominant of the other" do
+       it "lose when second rps can beat the first" do
         quickCheck $ do
            x <- genRPS
-           pure $ x `against` dominantOf x === Lose
+           pure $ x `against` whatCanBeat x === Lose
 
     describe "totalScore" do
        it "count scores for only wins and loses" do
@@ -45,32 +53,4 @@ rps =
            rounds <- genRounds wins loses ties
            pure $ totalScore rounds === Score wins loses
 
-
--- generators
-
-genRPS :: Gen RPS
-genRPS = elements $ NonEmpty Rock [ Paper, Scissor ]
-
-genWinRound :: Gen Round
-genWinRound = do
-  x <- genRPS
-  pure $ Round (dominantOf x) x
-
-genLoseRound :: Gen Round
-genLoseRound = do
-  x <- genRPS
-  pure $ Round x (dominantOf x)
-
-genTieRound :: Gen Round
-genTieRound = do
-  x <- genRPS
-  pure $ Round x x
-
-genRounds :: Int -> Int -> Int -> Gen (List Round)
-genRounds wins loses ties =
-    map fromFoldable $ do
-       winRounds <- vectorOf wins genWinRound
-       loseRounds <- vectorOf loses genLoseRound
-       tieRounds <- vectorOf ties genTieRound
-       shuffle $ winRounds <> loseRounds <> tieRounds
 

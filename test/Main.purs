@@ -8,9 +8,11 @@ import Test.Spec.Reporter.Console (consoleReporter)
 import Test.Spec.Runner (run)
 
 import Test.RPS (rps)
+import Test.Strategy (strategy)
 
 main :: Eff (QCRunnerEffects ()) Unit
 main = run [consoleReporter] do
   rps
+  strategy
 
 

@@ -41,16 +41,19 @@ instance monoidScore :: Monoid Score where
 
 -- module functions
 
-dominantOf :: RPS -> RPS
-dominantOf Rock = Paper
-dominantOf Paper = Scissor
-dominantOf Scissor = Rock
+whatCanBeat :: RPS -> RPS
+whatCanBeat Rock = Paper
+whatCanBeat Paper = Scissor
+whatCanBeat Scissor = Rock
+
+whatLoseTo :: RPS -> RPS
+whatLoseTo = whatCanBeat >>> whatCanBeat
 
 against :: RPS -> RPS -> Result
 against rps1 rps2 =
   if rps1 == rps2 then
     Tie
-  else if rps1 == dominantOf rps2 then
+  else if rps1 == whatCanBeat rps2 then
     Win
   else
     Lose

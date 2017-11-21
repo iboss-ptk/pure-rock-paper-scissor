@@ -38,6 +38,9 @@ instance semigroupScore :: Semigroup Score where
 instance monoidScore :: Monoid Score where
   mempty = Score 0 0
 
+derive instance genericRound :: Generic Round
+instance showRound :: Show Round where
+  show = gShow
 
 -- module functions
 

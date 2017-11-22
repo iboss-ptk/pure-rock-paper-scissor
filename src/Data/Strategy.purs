@@ -3,20 +3,20 @@ module Data.Strategy where
 import Prelude
 
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Random (RANDOM, randomInt)
-import Data.List (List, head)
+import Control.Monad.Eff.Random (RANDOM, random, randomInt)
+import Data.List (List, head, take)
 import Data.Maybe (Maybe(..))
-import Data.RPS (RPS(..), Result(..), Round(..), against, whatCanBeat)
+import Data.RPS (RPS(..), Result(..), Round(..), Score(..), against, totalScore, whatCanBeat)
 
 -- use player vs bot instead
 nextThrow :: RPS -> List Round -> RPS
 nextThrow randomly rounds = case head rounds of
   Nothing ->
     choose randomly
-  Just (Round mine opponent's) ->
-    case mine `against` opponent's of
-      Win  -> choose opponent's
-      Lose -> choose whatCanBeat opponent's
+  Just (Round bot's player's) ->
+    case bot's `against` player's of
+      Win  -> choose player's
+      Lose -> choose whatCanBeat player's
       Tie  -> choose randomly
   where
     choose = id
@@ -27,9 +27,30 @@ randomRPS = do
   pure $ case nums of
     1 -> Rock
     2 -> Paper
-    _ -> Scissor
+    _ -> Scissors
   
 nextThrowWithRandom :: ∀ e. List Round -> Eff ( random ∷ RANDOM | e ) RPS
 nextThrowWithRandom rounds = do
-  nextRand <- randomRPS
-  pure $ nextThrow nextRand rounds
+  nextRandomRPS <- randomRPS
+  percentile <- random
+
+  let shouldBeStrategic = percentile < strategicThrowPossibility
+  let isPlayerCounterStrategy =
+       case (take observingRoundCount rounds # totalScore) of
+        Score _ _ playerWins -> playerWins > playerWinsThreshold
+
+  pure $
+    if shouldBeStrategic then
+      if isPlayerCounterStrategy then
+        whatCanBeat >>> whatCanBeat $ nextThrow nextRandomRPS rounds
+      else
+        nextThrow nextRandomRPS rounds
+    else
+      nextRandomRPS
+
+  where
+    strategicThrowPossibility = 0.7
+    observingRoundCount = 10
+    playerWinsThreshold = 5
+
+

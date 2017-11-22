@@ -26,6 +26,9 @@ data Event = Player RPS | ConcludeRound Round
 
 type State = List Round
 
+initialState :: State
+initialState = empty
+
 -- | Return a new state (and effects) from each event
 foldp :: Event -> State -> EffModel State Event (random :: RANDOM)
 foldp (Player playerThrow) previousRounds = {
@@ -43,20 +46,20 @@ view :: State -> HTML Event
 view rounds =
   div do
     viewScore rounds
-    viewLastestRound rounds
+    viewLatestRound rounds
     viewSelectThrow
 
 viewSelectThrow :: HTML Event
 viewSelectThrow = div ! style styling $ do
     img ! src "rock.png" ! width "70" #! onClick (const $ Player Rock)
     img ! src "paper.png" ! width "70" #! onClick (const $ Player Paper)
-    img ! src "scissors.png" ! width "70" #! onClick (const $ Player Scissor)
+    img ! src "scissors.png" ! width "70" #! onClick (const $ Player Scissors)
   where
     styling = do
       textAlign center
 
-viewLastestRound :: State -> HTML Event
-viewLastestRound rounds = div ! style styling $
+viewLatestRound :: State -> HTML Event
+viewLatestRound rounds = div ! style styling $
   case head rounds of
     Nothing -> text ""
     Just (Round bot player) -> do
@@ -75,19 +78,25 @@ viewLastestRound rounds = div ! style styling $
 
     imgOf Rock = img ! src "rock.png" ! width "200"
     imgOf Paper = img ! src "paper.png" ! width "200"
-    imgOf Scissor = img ! src "scissors.png" ! width "200"
+    imgOf Scissors = img ! src "scissors.png" ! width "200"
 
 viewScore :: State -> HTML Event
 viewScore rounds = div ! style styling $ text $
   case totalScore rounds of
-    Score a b -> "Bot " <> (show a) <> " : " <> (show b) <> " You"
+    Score botScore ties playerScore ->
+      "Bot " <> (show botScore)
+      <>
+      " : " <> (show ties) <> " : "
+      <>
+      (show playerScore) <> " You"
   where
     styling = do
       fontSize (30.0 # px)
       textAlign center
 
+
+-- main
 type WebApp = App (DOMEvent -> Event) Event State
--- | Start and render the app
 
 main :: State -> Eff (CoreEffects (random :: RANDOM)) WebApp
 main state = do
@@ -101,7 +110,4 @@ main state = do
   renderToDOM "#app" app.markup app.input
 
   pure app
-
-initialState :: State
-initialState = empty
 

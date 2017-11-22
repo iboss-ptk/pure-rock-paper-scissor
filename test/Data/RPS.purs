@@ -51,6 +51,6 @@ rps =
            loses <- chooseInt 0 10
            ties <- chooseInt 0 10
            rounds <- genRounds wins loses ties
-           pure $ totalScore rounds === Score wins loses
+           pure $ totalScore rounds === Score wins ties loses
 
 

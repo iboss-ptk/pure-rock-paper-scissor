@@ -9,10 +9,10 @@ import Data.Monoid (class Monoid)
 
 -- data type declaration
 
-data RPS = Rock | Paper | Scissor
+data RPS = Rock | Paper | Scissors
 data Round = Round RPS RPS
 data Result = Win | Lose | Tie
-data Score = Score Int Int
+data Score = Score Int Int Int
 
 
 -- type class instances
@@ -33,10 +33,10 @@ instance showScore :: Show Score where
   show = gShow
 
 instance semigroupScore :: Semigroup Score where
-  append (Score a b) (Score a' b') = Score (a + a') (b + b')
+  append (Score a b c) (Score a' b' c') = Score (a + a') (b + b') (c + c')
 
 instance monoidScore :: Monoid Score where
-  mempty = Score 0 0
+  mempty = Score 0 0 0
 
 derive instance genericRound :: Generic Round
 instance showRound :: Show Round where
@@ -46,8 +46,8 @@ instance showRound :: Show Round where
 
 whatCanBeat :: RPS -> RPS
 whatCanBeat Rock = Paper
-whatCanBeat Paper = Scissor
-whatCanBeat Scissor = Rock
+whatCanBeat Paper = Scissors
+whatCanBeat Scissors = Rock
 
 whatLoseTo :: RPS -> RPS
 whatLoseTo = whatCanBeat >>> whatCanBeat
@@ -64,9 +64,9 @@ against rps1 rps2 =
 roundScore :: Round -> Score
 roundScore (Round rps1 rps2) =
   case rps1 `against` rps2 of
-    Win  -> Score 1 0
-    Lose -> Score 0 1
-    Tie  -> Score 0 0
+    Win  -> Score 1 0 0
+    Lose -> Score 0 0 1
+    Tie  -> Score 0 1 0
 
 totalScore :: List Round -> Score
 totalScore = foldMap roundScore

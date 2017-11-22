@@ -3,12 +3,12 @@ module Util.Generator where
 import Prelude
 
 import Test.QuickCheck.Gen (Gen, elements, shuffle, vectorOf)
-import Data.RPS (RPS(Rock, Paper, Scissor), Round(Round), whatCanBeat)
+import Data.RPS (RPS(Rock, Paper, Scissors), Round(Round), whatCanBeat)
 import Data.NonEmpty (NonEmpty(..))
 import Data.List (List, fromFoldable)
 
 genRPS :: Gen RPS
-genRPS = elements $ NonEmpty Rock [ Paper, Scissor ]
+genRPS = elements $ NonEmpty Rock [ Paper, Scissors ]
 
 genWinRound :: Gen Round
 genWinRound = do

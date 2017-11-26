@@ -8,7 +8,7 @@ import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Random (RANDOM)
 import Control.Plus (empty)
-import Data.List (List, head, (:))
+import Data.List (List, head, length, (:))
 import Data.Maybe (Maybe(..))
 import Data.RPS (RPS(..), Result(..), Round(..), Score(..), against, totalScore)
 import Data.Strategy (nextThrowWithRandom)
@@ -81,8 +81,9 @@ viewLatestRound rounds = div ! style styling $
     imgOf Scissors = img ! src "scissors.png" ! width "200"
 
 viewScore :: State -> HTML Event
-viewScore rounds = div ! style styling $ text $
-  case totalScore rounds of
+viewScore rounds = div ! style styling $ do
+  div $ text $ "Round " <> (show $ length rounds)
+  div $ text $ case totalScore rounds of
     Score botScore ties playerScore ->
       "Bot " <> (show botScore)
       <>

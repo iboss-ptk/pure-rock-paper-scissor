@@ -16,7 +16,8 @@
     "watch": "npm run clean && webpack-dev-server --content-base static/ --hot --inline --config webpack.config.js",
     "serve": "npm run build && serve -s static",
     "start": "npm run watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "pulp test",
+    "test:watch": "pulp --watch test"
   },
   "repository": {
     "type": "git",
